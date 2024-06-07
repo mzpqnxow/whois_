@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
-"""
-Whois client for python
+"""Whois client for python
 
 transliteration of:
-http://www.opensource.apple.com/source/adv_cmds/adv_cmds-138.1/whois/whois.c
+
+    http://www.opensource.apple.com/source/adv_cmds/adv_cmds-138.1/whois/whois.c
 
 Copyright (c) 2010 Chris Wolf
 
@@ -161,16 +159,19 @@ class NICClient(object):
 
     def whois(self, query, hostname, flags, many_results=False, quiet=False):
         """Perform initial lookup with TLD whois server
-        then, if the quick flag is false, search that result
-        for the region-specific whois server and do a lookup
-        there for contact details.  If `quiet` is `True`, will
-        not send a message to logger when a socket error
+
+        If the quick flag is false, search that result for the region-specific whois
+        server and do a lookup there for contact details
+
+        If `quiet` is `True`, will not send a message to logger when a socket error
         is encountered.
         """
         response = b""
         if "SOCKS" in os.environ:
+            # Would be nice to refactor this out into a separate function (at least) if not a separate
+            # module that deals with the networking bits in my opinion
             try:
-                import socks
+                import socks  # type: ignore
             except ImportError as e:
                 logger.error(
                     "You need to install the Python socks module. Install PIP "
@@ -190,8 +191,15 @@ class NICClient(object):
             ]:
                 socks_proto = socket.AF_INET6
             s = socks.socksocket(socks_proto)
+            # Allow socks_rdns to be set in some way or remove it; True is the default value anyway
+            socks_rdns = True
             s.set_proxy(
-                socks.SOCKS5, socksproxy, int(port), True, socks_user, socks_password
+                proxy_type=socks.SOCKS5,
+                addr=socksproxy,
+                port=int(port),
+                rdns=socks_rdns,
+                username=socks_user,
+                password=socks_password,
             )
         else:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -402,8 +410,8 @@ class NICClient(object):
         flag is false, perform a second lookup on the region-specific
         server for contact records.  If `quiet` is `True`, no message
         will be printed to STDOUT when a socket error is encountered."""
-        nichost = None
-        # whoud happen when this function is called by other than main
+        _nichost = None  # not used, can it be removed?
+        # what would happen when this function is called by other than main
         if options is None:
             options = {}
 
@@ -581,9 +589,10 @@ def parse_command_line(argv):
 
 
 if __name__ == "__main__":
-    flags = 0
+    # TODO: Move this into a an setuptools "entry-point"
+    query_flags = 0
     nic_client = NICClient()
-    options, args = parse_command_line(sys.argv)
-    if options.b_quicklookup:
-        flags = flags | NICClient.WHOIS_QUICK
-    logger.debug(nic_client.whois_lookup(options.__dict__, args[1], flags))
+    query_options, args = parse_command_line(sys.argv)
+    if query_options.b_quicklookup:
+        query_flags |= NICClient.WHOIS_QUICK
+    logger.debug(nic_client.whois_lookup(query_options.__dict__, args[1], query_flags))
