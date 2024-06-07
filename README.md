@@ -21,7 +21,10 @@ u'\nDomain Name: EXAMPLE.COM
 Registry Domain ID: 2336799_DOMAIN_COM-VRSN
 ...'
 
->>> print(w)  # print values of all found attributes    
+>>> print(w)  # print values of all found attributes (as a dict)
+{'creation_date': [datetime.datetime(1995, 2, 23, 5, 0, tzinfo=tzoffset('UTC', 0)), ...
+
+>>> print(w.json(indent=2))  # print values of all found attributes as pretty-printed JSON
 {
   "creation_date": "1995-08-14 04:00:00",
   "expiration_date": "2022-08-13 04:00:00",
@@ -32,7 +35,6 @@ Registry Domain ID: 2336799_DOMAIN_COM-VRSN
       "B.IANA-SERVERS.NET"
   ],
   ...
->>> print(w.json(indent=2))
 
 ```
 
