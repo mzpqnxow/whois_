@@ -21,6 +21,11 @@ In this branch, the following has been done:
 - A tiny number of objective "fixes" (e.g. the `datetime.UTC` does not seem to exist before Python 3.11,
   so that was replaced)
 - Some not so desired renames of things that should be considered temporary
+- Changed from `dict` to `UserDict`, to eliminate the need for `__setitem__`, `__getitem__`, etc.
+  - Side effect: this makes `print(w)` print an ugly looking dict
+  - I added `def json(self, **kwargs)` to compensate (`print(w.json(indent=2))`)
+
+It's fine with me whether you would like to "accept" or "reject" any of these
 
 *NOT* yet done:
 
