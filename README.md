@@ -32,6 +32,8 @@ Registry Domain ID: 2336799_DOMAIN_COM-VRSN
       "B.IANA-SERVERS.NET"
   ],
   ...
+>>> print(w.json(indent=2))
+
 ```
 
 Install
