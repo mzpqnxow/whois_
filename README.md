@@ -7,6 +7,41 @@ Goal
 -  Query a WHOIS server directly instead of going through an
    intermediate web service like many others do.
 
+Experimental Refactor Branch
+============================
+
+In this branch, the following has been done:
+
+- To reduce boilerplate, the base class and per-TLD subclasses were changed a bit
+  - They no longer need a boilerplate `__init__()`
+  - Tried to make a quick pass at accommodating for some one-off patterns in a generic way
+- Refactoring of modules
+  - Not suggesting this is a final state, partially it was done to deal with circular imports
+- A bunch of small bits of subjective improvements (style, some type annotations here and there)
+- A tiny number of objective "fixes" (e.g. the `datetime.UTC` does not seem to exist before Python 3.11,
+  so that was replaced)
+- Some not so desired renames of things that should be considered temporary
+
+*NOT* yet done:
+
+- Separating TLD subclasses into individual modules in a package (e.g. `whois.tld.com`)
+  - To be loaded dynamically, rather than using a large `if`/`else`
+- Broader refactor of the modules
+  - I believe the networking code would be best in its own module. It makes
+    caching easier if that's something desired later, and it's a natural
+    separation in my opinion
+- Full PEP-484 annotation; this is a quick task but I didn't want to muck up
+  the more substantive changes with changes to every single function and class
+  if it could be avoided
+- Formatting based on `black`; though some modules probably did get reformatted
+  by `black` by my IDE, if so, sorry for that - it makes diffs impossible to
+  read
+
+Beware, this was done in 4 hours on a Saturday morning. I did some basic testing
+on a few domains, but don't expect it to work 100% on everything. Especially
+the more exotic classes that had implemented 5-10 lines of their own logic in
+`__init__()`. I believe I ported those to a cleaner style, but it's possible
+I made a mistake or three :>
 
 Example
 =======
